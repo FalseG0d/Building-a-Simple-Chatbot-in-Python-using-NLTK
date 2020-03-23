@@ -97,15 +97,20 @@ def bag_of_words(s,words):
     return numpy.array(bag)
 
 def chat():
-    print("Start Talking With Robo Type Bye to Quit")
+    print("\n\n\n Hi I am Gemini, I was created by False_G0d as a device to Capture Human Essence I would love to talk to you but at any point if you are bored you can say Bye to Quit \n\n\n ")
     while(True):
         inp=input("[*] ")
         if(inp.lower()=="bye"):
             break
 
-        results=model.predict([bag_of_words(inp,words)])
+        results=model.predict([bag_of_words(inp,words)])[0]
 
         results_index=numpy.argmax(results)
+
+
+        if results[results_index]<0.7:
+            print("I dont Understand the Question can you explain it?")
+            continue
 
         tag=labels[results_index]
 
@@ -114,5 +119,5 @@ def chat():
                 responses=tg['responses']
 
         print(random.choice(responses))
-
+        
 chat()
