@@ -1,5 +1,4 @@
 import nltk
-nltk.download('punkt')
 from nltk.stem.lancaster import LancasterStemmer
 
 stemmer=LancasterStemmer()
@@ -62,7 +61,7 @@ except:
         training.append(bag)
         output.append(output_row)
 
-        with open("data.pickle","rb") as f:
+        with open("data.pickle","wb") as f:
             pickle.dump((words,labels,training,output),f)
 
     training=numpy.array(training)
@@ -78,12 +77,10 @@ net=tflearn.regression(net)
 
 model=tflearn.DNN(net)
 
-
 try:
     model.load("model.tflearn")
-
 except:
-    model.fit(training,output,n_epoch=1000,batch_size=8,show_metric=True)
+    model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
     model.save("model.tflearn")
 
 def bag_of_words(s,words):
@@ -95,7 +92,7 @@ def bag_of_words(s,words):
     for se in s_words:
         for i,w in enumerate(words):
             if w==se:
-                bag[i].append(1)
+                bag[i]=1
 
     return numpy.array(bag)
 
@@ -105,3 +102,17 @@ def chat():
         inp=input("[*] ")
         if(inp.lower()=="bye"):
             break
+
+        results=model.predict([bag_of_words(inp,words)])
+
+        results_index=numpy.argmax(results)
+
+        tag=labels[results_index]
+
+        for tg in data["intents"]:
+            if tg["tag"]==tag:
+                responses=tg['responses']
+
+        print(random.choice(responses))
+
+chat()
